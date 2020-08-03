@@ -66,7 +66,7 @@ abstract class BaseTest
     private function getDescription(string $taskPath): string
     {
         $description = '';
-        $descriptionPath = $this->getBaseCasePath() . $taskPath . DIRECTORY_SEPARATOR . 'problem.txt';
+        $descriptionPath = $taskPath . DIRECTORY_SEPARATOR . 'problem.txt';
         if (file_exists($descriptionPath)) {
             $description = file_get_contents($descriptionPath);
         }
@@ -79,16 +79,16 @@ abstract class BaseTest
     {
         if (is_array($this->errors)) {
             foreach ($this->errors as $error) {
-                echo "Тест не пройден!\r\nВход: '{$error['test_input']}'\r\nРезультат: '{$error['result']}'\r\nОжидаемый результат: - '{$error['test_expected']}'\r\n";
+                echo "Тест не пройден!\r\n\tВход: '{$error['test_input']}'\r\n\tРезультат: '{$error['result']}'\r\n\tОжидаемый результат: - '{$error['test_expected']}'\r\n";
             }
         }
     }
 
-    protected function error($testExpected, $testInput, $result)
+    protected function error(TestCase $test, $result)
     {
         $this->errors[] = [
-            'test_input' => $testInput,
-            'test_expected' => $testExpected,
+            'test_input' => $test->input,
+            'test_expected' => $test->expectedResult,
             'result' => $result
         ];
     }
