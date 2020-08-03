@@ -1,4 +1,5 @@
 <?php
+
 namespace test;
 
 class TicketsTest extends BaseTest
@@ -8,39 +9,10 @@ class TicketsTest extends BaseTest
 
     function runCase(TestCase $test): void
     {
-        $n = strlen($test->input);
-        $result = 0;
-        $ranges = [];
 
-        for ($i = 1; $i <= $n; $i++) {
-            $ranges[] = range(0, 9);
-        }
-        if (!empty($ranges)) {
-            foreach ($ranges as $k => $range) {
-                foreach ($range[$k] as $digit) {
-                    $halfTicket = $digit;
-                    if (isset($range[$n-$k])) {
-                        foreach ($range[$n-$k] as $nextDigit) {
-                            $halfTicket .= $nextDigit;
-                        }
-                    } else {
-                        $tickets[] = $halfTicket;
-                        $halfTicket = '';
-                    }
-                }
-            }
-            foreach ($tickets as $leftHalfTicket) {
-                foreach ($tickets as $rightHalfTicket) {
-                    $left = str_split($leftHalfTicket);
-                    $right = str_split($rightHalfTicket);
-                    if (array_sum($left) === array_sum($right)) {
-                        $result++;
-                    }
-                }
-            }
-        }
-
-        if ($result === $test->expectedResult) {
+        $n = (int)$test->input;
+        $result = $this->countLuckyTicketFast($n);
+        if ($result === (int)$test->expectedResult) {
             $this->countSuccessful++;
         } else {
             $this->error($test, $result);
@@ -48,11 +20,39 @@ class TicketsTest extends BaseTest
 
     }
 
-    private function isLucky(string $num)
+    private function getTicketsArray($n)
     {
-        $ar = str_split($num, strlen($num)/2);
-        $left = str_split($ar[0]);
-        $right = str_split($ar[1]);
-
+        $ticketsArray = array();
+        for ($i = 1; $i <= $n; $i++) {
+            $iLength = $i * 9 + 1;
+            if ($i == 1) {
+                for ($j = 0; $j < $iLength; $j++) {
+                    $ticketsArray[$i][$j] = 1;
+                }
+            } else {
+                $iSum = 0;
+                for ($k = 0; $k <= $iLength / 2; $k++) {
+                    $iSum += $ticketsArray[$i - 1][$k];
+                    if ($k >= 10)
+                        $iSum -= $ticketsArray[$i - 1][$k - 10];
+                    $ticketsArray[$i][$k] = $iSum;
+                }
+                for ($s = $k; $s < $iLength; $s++) {
+                    $ticketsArray[$i][$s] = $ticketsArray[$i][$iLength - 1 - $s];
+                }
+            }
+        }
+        return $ticketsArray;
     }
+
+    private function countLuckyTicketFast($n)
+    {
+        $ticketsArray = $this->getTicketsArray($n);
+        $iCount = 0;
+        for ($i = 0; $i <= $n * 9; $i++) {
+            $iCount = ($iCount + $ticketsArray[$n][$i] * $ticketsArray[$n][$i]);
+        }
+        return $iCount;
+    }
+
 }
