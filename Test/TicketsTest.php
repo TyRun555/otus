@@ -7,16 +7,12 @@ class TicketsTest extends BaseTest
 
     public $taskName = '1.Tickets';
 
-    function runCase(TestCase $test): void
+    function runCase(TestCase $test): bool
     {
 
         $n = (int)$test->input;
-        $result = $this->countLuckyTicketFast($n);
-        if ($result === (int)$test->expectedResult) {
-            $this->countSuccessful++;
-        } else {
-            $this->error($test, $result);
-        }
+        $result = new Result(null, $this->countLuckyTicketFast($n));
+        return $this->checkResult($result, $test);
 
     }
 
@@ -55,4 +51,8 @@ class TicketsTest extends BaseTest
         return $iCount;
     }
 
+    protected function getInputVars(TestCase $testCase)
+    {
+        // TODO: Implement getInputVars() method.
+    }
 }
