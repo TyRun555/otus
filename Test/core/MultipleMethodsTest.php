@@ -47,10 +47,10 @@ abstract class MultipleMethodsTest extends BaseTest
 
     protected function compare(): void
     {
-        echo "Время работы алгоритмов". PHP_EOL;
+        echo "\033[01;47mВремя работы алгоритмов\033[0m". PHP_EOL;
         foreach ($this->totalRunTime as $method => $runTime) {
             $runTime *= 1000000; //микросекунды
-            echo "\t{$method}: {$runTime}". PHP_EOL;
+            echo "\t{$method}: \033[01;36m{$runTime}\033[0m mks". PHP_EOL;
         }
     }
 
